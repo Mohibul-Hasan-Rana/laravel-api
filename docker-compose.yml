@@ -1,0 +1,31 @@
+version: '3.8'
+services:
+  app:
+    build:
+      context: .
+    container_name: laravel_app
+    ports:
+      - 8000:8000
+    volumes:
+      - .:/var/www/html
+    depends_on:
+      - mysql
+    environment:
+      DB_HOST: 127.0.0.1
+      DB_DATABASE: ba
+      DB_USERNAME: root
+      DB_PASSWORD: admin
+
+  mysql:
+    image: mysql:8
+    container_name: mysql
+    ports:
+      - 3307:3306
+    environment:
+      MYSQL_ROOT_PASSWORD: admin
+      MYSQL_DATABASE: ba
+    volumes:
+      - dbdata:/var/lib/mysql
+
+volumes:
+  dbdata:
