@@ -9,7 +9,7 @@ services:
     volumes:
       - .:/var/www/html
     environment:
-      DB_HOST: mysql_db  # Match the MySQL container name
+      DB_HOST: db  # Match the MySQL container name
       DB_PORT: 3306      # Internal MySQL port
       DB_DATABASE: ba
       DB_USERNAME: root
@@ -20,7 +20,7 @@ services:
 
   db:
     image: mysql:8
-    container_name: mysql_db
+    container_name: db
     ports:
       - 3307:3306  # Only needed if you want external access
     environment:
