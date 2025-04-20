@@ -4,39 +4,47 @@ namespace App\Http\Controllers\API;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-
 use App\Models\Product;
 use App\Models\Category;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rule;
 use Illuminate\Http\Response;
+use App\Services\CategoryService;
+use App\Interfaces\CategoryInterface;
+use App\Http\Requests\CategoryRequest;
 
 class CategoryController extends Controller
 {
+    protected $service;
+
+    public function __construct(CategoryService $service)
+    {
+        $this->service = $service;
+    }
+
     public function index() {
-        return Category::all();
+        return $this->service->getAll();
     }
 
-    public function store(Request $request) {
-        $request->validate([
-            'name' => 'required|string|max:255',
-            'description' => 'nullable|string',
-        ]);
+    public function store(CategoryRequest $request) {        
 
-        return Category::create($request->all());
+        return $this->service->create($request->all());
     }
 
-    public function show(Category $category) {
-        return $category;
+    public function show($id)
+    {
+        return $this->service->show($id);
     }
 
-    public function update(Request $request, Category $category) {
-        $category->update($request->all());
-        return $category;
+     public function update(Request $request, $id)
+    {        
+        $product =  $this->service->update($request->all(), $id);
+        return $product;
     }
 
-    public function destroy(Category $category) {
-        $category->delete();
+    public function destroy($id)
+    {
+        $this->service->delete($id);
         return response()->noContent();
     }
 }

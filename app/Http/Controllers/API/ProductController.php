@@ -9,45 +9,48 @@ use App\Models\Category;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rule;
 use Illuminate\Http\Response;
+use App\Services\ProductService;
+use App\Interfaces\ProductInterface;
+use App\Http\Requests\ProductRequest;
 
 class ProductController extends Controller
 {
+    protected $service;
+
+    public function __construct(ProductService $service)
+    {
+        $this->service = $service;
+    }
    
     public function index()
     {
-        return Product::with('category')->get();
+        return $this->service->getAll();
     }
 
    
-    public function store(Request $request)
+    public function store(ProductRequest $request)
     {
-        $request->validate([
-            'name' => 'required|string|max:255',
-            'description' => 'nullable|string',
-            'price' => 'required|numeric',
-            'category_id' => 'required|exists:categories,id',
-        ]);
-
-        return Product::create($request->all());
+        
+        return $this->service->create($request->all());
     }
 
     
-    public function show(Product $product)
+    public function show($id)
     {
-        return $product->load('category');
+        return $this->service->show($id);
     }
 
     
-    public function update(Request $request, Product $product)
-    {
-        $product->update($request->all());
+    public function update(Request $request, $id)
+    {        
+        $product =  $this->service->update($request->all(), $id);
         return $product;
     }
 
     
-    public function destroy(Product $product)
+    public function destroy($id)
     {
-        $product->delete();
+        $this->service->delete($id);
         return response()->noContent();
     }
 }
